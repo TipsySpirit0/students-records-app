@@ -1,22 +1,30 @@
 import { Routes } from '@angular/router';
-import { LandingComponent } from './landing/landing.component';
-import { StudentRecordsComponent } from './student-records/student-records.component';
+import { LandingComponent } from './dashboard/landing/landing.component';
+import { StudentRecordsComponent } from './dashboard/student-records/student-records.component';
 import { LoginComponent } from './auth/login/login.component';
-import { authGuardGuard } from './auth-guard.guard';
+
+import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { authGuardGuard } from './auth/auth-guard.guard';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'login',
     component: LoginComponent,
   },
   {
-    path: 'landing',
-    component: LandingComponent,
-    canMatch: [authGuardGuard],
+    path: 'dashboard',
+    loadChildren: () =>
+      import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+      // canMatch: authGuardGuard,
   },
-  {
-    path: 'students',
-    component: StudentRecordsComponent,
-    canMatch: [authGuardGuard],
-  },
+  //   {
+  //     path: 'landing',
+  //     component: LandingComponent,
+  //     canMatch: [authGuardGuard],
+  //   },
+  //   {
+  //     path: 'students',
+  //     component: StudentRecordsComponent,
+  //     canMatch: [authGuardGuard],
+  //   },
 ];
