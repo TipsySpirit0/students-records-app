@@ -5,9 +5,9 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'students-records-app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  sidebarExpanded = true;
+  sidebarExpanded: boolean = true;
   constructor() {}
 }

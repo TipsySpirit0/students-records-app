@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
+import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Component({
   selector: 'students-records-app-root',
