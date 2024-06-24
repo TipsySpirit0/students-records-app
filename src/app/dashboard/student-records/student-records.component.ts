@@ -1,4 +1,11 @@
 import { Component } from '@angular/core';
+import {
+  FormControl,
+  FormBuilder,
+  FormGroup,
+  Validator,
+  Validators,
+} from '@angular/forms';
 
 import { ColDef, GridApi } from 'ag-grid-community';
 
@@ -7,7 +14,6 @@ import { ColDef, GridApi } from 'ag-grid-community';
   templateUrl: './student-records.component.html',
   styleUrl: './student-records.component.scss',
 })
-
 export class StudentRecordsComponent {
   gridApi: any;
   apiResponse: any = [
@@ -89,6 +95,8 @@ export class StudentRecordsComponent {
     },
   ];
 
+  studentDetailsForm: FormGroup;
+
   columnDefs: ColDef[] = [
     { field: 'name' },
     { field: 'country' },
@@ -106,6 +114,61 @@ export class StudentRecordsComponent {
     { field: 'phone' },
     { field: 'email' },
   ];
+
+  get nameControl(): FormControl {
+    return this.studentDetailsForm.get('name') as FormControl;
+  }
+  get countryControl(): FormControl {
+    return this.studentDetailsForm.get('country') as FormControl;
+  }
+  get stateControl(): FormControl {
+    return this.studentDetailsForm.get('state') as FormControl;
+  }
+  get passwordDeclarationControl(): FormControl {
+    return this.studentDetailsForm.get('passwordDeclaration') as FormControl;
+  }
+  get fitnessDeclarationControl(): FormControl {
+    return this.studentDetailsForm.get('fitnessDeclaration') as FormControl;
+  }
+  get courseNameControl(): FormControl {
+    return this.studentDetailsForm.get('courseName') as FormControl;
+  }
+  get subjectsControl(): FormControl {
+    return this.studentDetailsForm.get('subjects') as FormControl;
+  }
+  get dateControl(): FormControl {
+    return this.studentDetailsForm.get('date') as FormControl;
+  }
+  get cityControl(): FormControl {
+    return this.studentDetailsForm.get('city') as FormControl;
+  }
+  get streetControl(): FormControl {
+    return this.studentDetailsForm.get('street') as FormControl;
+  }
+  get address2Control(): FormControl {
+    return this.studentDetailsForm.get('email') as FormControl;
+  }
+  get zipControl(): FormControl {
+    return this.studentDetailsForm.get('zip') as FormControl;
+  }
+
+  constructor(private fb: FormBuilder) {
+    this.studentDetailsForm = this.fb.group({
+      name: this.fb.control('', [Validators.required]),
+      conutry: this.fb.control('', [Validators.required]),
+      state: this.fb.control('', [Validators.required]),
+      passwordDeclaration: this.fb.control('', [Validators.required]),
+      fitnessDeclaration: this.fb.control('', [Validators.required]),
+      courseName: this.fb.control('', [Validators.required]),
+      subjects: this.fb.control('', [Validators.required]),
+      date: this.fb.control('', [Validators.required]),
+      city: this.fb.control('', [Validators.required]),
+      street: this.fb.control('', [Validators.required]),
+      address2: this.fb.control('', [Validators.required]),
+      email: this.fb.control('', [Validators.required]),
+      zip: this.fb.control('', [Validators.required]),
+    });
+  }
 
   onGridReady(params: any) {
     this.gridApi = params?.api;
