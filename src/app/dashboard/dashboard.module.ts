@@ -2,7 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
-import { NgbHighlight } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbHighlight,
+  NgbTypeaheadModule,
+  NgbDatepickerModule,
+} from '@ng-bootstrap/ng-bootstrap';
+
 import { AgGridModule } from 'ag-grid-angular';
 import { LandingComponent } from './landing/landing.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
@@ -43,6 +48,8 @@ const routes: Routes = [
     CommonModule,
     RouterModule,
     NgbHighlight,
+    NgbDatepickerModule,
+    NgbTypeaheadModule,
     AgGridModule,
     FormsModule,
     ReactiveFormsModule,

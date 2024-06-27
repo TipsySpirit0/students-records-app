@@ -7,6 +7,14 @@ import {
   Validators,
 } from '@angular/forms';
 
+import {
+  ModalDismissReasons,
+  NgbModal,
+  NgbDateStruct,
+  NgbCalendar,
+  NgbModalConfig,
+} from '@ng-bootstrap/ng-bootstrap';
+
 import { ColDef, GridApi } from 'ag-grid-community';
 
 @Component({
@@ -96,6 +104,10 @@ export class StudentRecordsComponent {
   ];
 
   studentDetailsForm: FormGroup;
+  model!: NgbDateStruct;
+  today = this.calendar.getToday();
+  closeResult: any;
+  selectedRecord: any;
 
   columnDefs: ColDef[] = [
     { field: 'name' },
@@ -124,8 +136,8 @@ export class StudentRecordsComponent {
   get stateControl(): FormControl {
     return this.studentDetailsForm.get('state') as FormControl;
   }
-  get passwordDeclarationControl(): FormControl {
-    return this.studentDetailsForm.get('passwordDeclaration') as FormControl;
+  get passportDeclarationControl(): FormControl {
+    return this.studentDetailsForm.get('passportDeclaration') as FormControl;
   }
   get fitnessDeclarationControl(): FormControl {
     return this.studentDetailsForm.get('fitnessDeclaration') as FormControl;
@@ -146,18 +158,25 @@ export class StudentRecordsComponent {
     return this.studentDetailsForm.get('street') as FormControl;
   }
   get address2Control(): FormControl {
+    return this.studentDetailsForm.get('address2') as FormControl;
+  }
+  get emailControl(): FormControl {
     return this.studentDetailsForm.get('email') as FormControl;
   }
   get zipControl(): FormControl {
     return this.studentDetailsForm.get('zip') as FormControl;
   }
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private calendar: NgbCalendar
+  ) {
     this.studentDetailsForm = this.fb.group({
       name: this.fb.control('', [Validators.required]),
-      conutry: this.fb.control('', [Validators.required]),
+      country: this.fb.control('', [Validators.required]),
       state: this.fb.control('', [Validators.required]),
-      passwordDeclaration: this.fb.control('', [Validators.required]),
+      passportDeclaration: this.fb.control('', [Validators.required]),
       fitnessDeclaration: this.fb.control('', [Validators.required]),
       courseName: this.fb.control('', [Validators.required]),
       subjects: this.fb.control('', [Validators.required]),
@@ -170,7 +189,76 @@ export class StudentRecordsComponent {
     });
   }
 
+  open(content: any) {
+    this.studentDetailsForm.reset();
+    this.modalService.open(content).result.then(
+      (result) => {
+        const newRecord = this.studentDetailsForm.value;
+        this.apiResponse.push({ ...newRecord });
+        this.apiResponse = JSON.parse(JSON.stringify(this.apiResponse));
+      },
+      (reason) => {
+        //Dismiss
+      }
+    );
+  }
+
   onGridReady(params: any) {
     this.gridApi = params?.api;
+  }
+
+  onOpenViewForm(studentsForm: any) {
+    const selectedRow = this.gridApi?.getSelectedRows()[0];
+    this.studentDetailsForm.patchValue(selectedRow);
+    this.studentDetailsForm.disable();
+    this.modalService.open(studentsForm).result.then(
+      (result) => {
+        this.studentDetailsForm.enable();
+      },
+      (reason) => {
+        this.closeResult = `Dismissed${this.getDismissReason(reason)}`;
+        this.studentDetailsForm.enable();
+      }
+    );
+  }
+
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'Reason was escape press';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'Backdrop was clicked';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+
+  onDeleteRecord(deleteTemplate: any) {
+    const selectedRecord = this.gridApi?.getSelectedRows()[0];
+    this.selectedRecord = selectedRecord;
+    let newResponse: any = [];
+
+    this.modalService.open(deleteTemplate).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${this.getDismissReason({ result })}`;
+        this.apiResponse.forEach((rec: any) => {
+          if (rec.name !== selectedRecord.name) {
+            newResponse.push(rec);
+          }
+        });
+
+        this.apiResponse = [...newResponse];
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason({ reason })}`;
+      }
+    );
+  }
+
+  clearSelection(): void {
+    this.gridApi.deselectAll();
+  }
+
+  checkIfSelected(): boolean {
+    return this.gridApi?.getSelectedRows()?.length > 0;
   }
 }
